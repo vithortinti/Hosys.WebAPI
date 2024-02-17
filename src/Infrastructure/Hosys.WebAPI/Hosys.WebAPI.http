@@ -1,0 +1,6 @@
+@Hosys.WebAPI_HostAddress = http://localhost:5288
+
+GET {{Hosys.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

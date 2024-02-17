@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{4CC90DE0-85A3-4A01-A3BE-25C9EC4312EF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosys.Domain", "Hosys.Domain\Hosys.Domain.csproj", "{01CA30CB-5970-4B5D-A02B-8A97EE5FAEC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosys.Application", "Hosys.Application\Hosys.Application.csproj", "{A5DDBBB7-CC9D-4CDE-AE4F-3E59F98A1C96}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosys.WebAPI", "Infrastructure\Hosys.WebAPI\Hosys.WebAPI.csproj", "{34909D91-754B-4311-975A-F9B71195CA21}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosys.Persistence", "Infrastructure\Hosys.Persistence\Hosys.Persistence.csproj", "{B1289DCA-7091-4B72-885F-6CB7ADB5BC21}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosys.Services", "Infrastructure\Hosys.Services\Hosys.Services.csproj", "{B130626E-3DCC-415E-905D-281991BBD526}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01CA30CB-5970-4B5D-A02B-8A97EE5FAEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01CA30CB-5970-4B5D-A02B-8A97EE5FAEC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01CA30CB-5970-4B5D-A02B-8A97EE5FAEC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01CA30CB-5970-4B5D-A02B-8A97EE5FAEC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5DDBBB7-CC9D-4CDE-AE4F-3E59F98A1C96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5DDBBB7-CC9D-4CDE-AE4F-3E59F98A1C96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5DDBBB7-CC9D-4CDE-AE4F-3E59F98A1C96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5DDBBB7-CC9D-4CDE-AE4F-3E59F98A1C96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34909D91-754B-4311-975A-F9B71195CA21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34909D91-754B-4311-975A-F9B71195CA21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34909D91-754B-4311-975A-F9B71195CA21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34909D91-754B-4311-975A-F9B71195CA21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1289DCA-7091-4B72-885F-6CB7ADB5BC21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1289DCA-7091-4B72-885F-6CB7ADB5BC21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1289DCA-7091-4B72-885F-6CB7ADB5BC21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1289DCA-7091-4B72-885F-6CB7ADB5BC21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B130626E-3DCC-415E-905D-281991BBD526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B130626E-3DCC-415E-905D-281991BBD526}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B130626E-3DCC-415E-905D-281991BBD526}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B130626E-3DCC-415E-905D-281991BBD526}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{34909D91-754B-4311-975A-F9B71195CA21} = {4CC90DE0-85A3-4A01-A3BE-25C9EC4312EF}
+		{B1289DCA-7091-4B72-885F-6CB7ADB5BC21} = {4CC90DE0-85A3-4A01-A3BE-25C9EC4312EF}
+		{B130626E-3DCC-415E-905D-281991BBD526} = {4CC90DE0-85A3-4A01-A3BE-25C9EC4312EF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {473640B5-33EF-4A22-A572-1452D70401CB}
+	EndGlobalSection
+EndGlobal
