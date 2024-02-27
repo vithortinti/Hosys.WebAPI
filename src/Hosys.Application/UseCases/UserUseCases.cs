@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using FluentResults;
 using Hosys.Application.Data.Outputs.User;
+using Hosys.Application.Interfaces.Security;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.Models;
 using Hosys.Domain.Interfaces.User;
@@ -9,9 +10,10 @@ using Hosys.Domain.Models.User;
 
 namespace Hosys.Application.UseCases
 {
-    public class UserUseCases(IUserRepository userRepository, IMapper mapper) : IUserUseCases
+    public class UserUseCases(IUserRepository userRepository, IHash hash, IMapper mapper) : IUserUseCases
     {
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly IHash _hash = hash;
         private readonly IMapper _mapper = mapper;
 
         public async Task<Result<Token>> CreateUser(CreateUserDTO userDto)
@@ -62,7 +64,7 @@ namespace Hosys.Application.UseCases
             // Map DTO to Domain Model and create user
             var user = _mapper.Map<User>(userDto);
             user.Id = Guid.NewGuid(); // Define the user ID
-            Result result = await _userRepository.Create(user, userDto.Password);
+            Result result = await _userRepository.Create(user, await _hash.HashAsync(userDto.Password));
             if (result.IsFailed)
                 return Result.Fail(result.Errors);
 

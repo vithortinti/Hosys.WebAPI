@@ -1,9 +1,11 @@
 using System.Reflection;
+using Hosys.Application.Interfaces.Security;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.UseCases;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Persistence;
 using Hosys.Persistence.Repositories.User;
+using Hosys.Security.Hash;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = new ConfigurationBuilder()
@@ -33,6 +35,13 @@ builder.Services.AddScoped<IUserUseCases, UserUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Add security layers
+builder.Services.AddSingleton<IHash>(new Argon2Hash(
+    config["Security:Argon2:Salt"]!,
+    config["Security:Argon2:Secret"]!,
+    config["Security:Argon2:AssociatedData"]!
+    ));
 
 var app = builder.Build();
 

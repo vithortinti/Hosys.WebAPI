@@ -54,7 +54,7 @@ namespace Hosys.Persistence.Repositories.User
                     new MySqlParameter("@LAST_NAME", user.LastName),
                     new MySqlParameter("@NICKNAME", user.NickName),
                     new MySqlParameter("@E_MAIL", user.Email),
-                    new MySqlParameter("@PASSWORD", ComputeSHA256Hash(password)),
+                    new MySqlParameter("@PASSWORD", password),
                     new MySqlParameter("@ROLE", user.Role),
                     new MySqlParameter("@CREATED_AT", user.CreatedAt),
                     new MySqlParameter("@RECOVERY_KEY", recoveryKey),
@@ -266,7 +266,7 @@ namespace Hosys.Persistence.Repositories.User
                 MySqlParameter[] parameters =
                 [
                     new MySqlParameter("@ID", id),
-                    new MySqlParameter("@PASSWORD", ComputeSHA256Hash(newPassword))
+                    new MySqlParameter("@PASSWORD", newPassword)
                 ];
 
                 int rowsAffected = await _database.ExecuteCommandAsync(sql, parameters);

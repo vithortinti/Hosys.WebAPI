@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Hosys.Application\Hosys.Application.csproj" />
     <ProjectReference Include="..\Hosys.Persistence\Hosys.Persistence.csproj" />
+    <ProjectReference Include="..\..\Hosys.Security\Hosys.Security.csproj" />
   </ItemGroup>
 
 </Project>
