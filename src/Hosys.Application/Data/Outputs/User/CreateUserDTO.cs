@@ -2,10 +2,34 @@ namespace Hosys.Application.Data.Outputs.User
 {
     public class CreateUserDTO
     {
-        public required string Name { get; set; }
-        public required string LastName { get; set; }
-        public required string Nickname { get; set; }
-        public required string Email { get; set; }
+        private string? _name;
+        public required string Name
+        {
+            get => _name!;
+            set => _name = value.Trim();
+        }
+
+        private string? _lastName;
+        public required string LastName
+        {
+            get => _lastName!;
+            set => _lastName = value.Trim();
+        }
+
+        private string? _nickname;
+        public required string Nickname
+        {
+            get => _nickname!;
+            set => _nickname = value.Trim();
+        }
+
+        private string? _email;
+        public required string Email
+        {
+            get => _email!;
+            set => _email = value.Trim();
+        }
+        
         public required string Password { get; set; }
         public string Role = "USER";
         public DateTime CreatedAt = DateTime.Now;
