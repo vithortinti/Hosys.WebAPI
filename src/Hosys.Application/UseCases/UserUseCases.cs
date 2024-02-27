@@ -1,14 +1,15 @@
+using System.Text.RegularExpressions;
 using AutoMapper;
 using FluentResults;
 using Hosys.Application.Data.Outputs.User;
-using Hosys.Application.Interfaces.Services;
+using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.Models;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Domain.Models.User;
 
-namespace Hosys.Application.Services
+namespace Hosys.Application.UseCases
 {
-    public class UserService(IUserRepository userRepository, IMapper mapper) : IUserService
+    public class UserUseCases(IUserRepository userRepository, IMapper mapper) : IUserUseCases
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IMapper _mapper = mapper;
@@ -41,6 +42,21 @@ namespace Hosys.Application.Services
             if (nickname.IsSuccess)
             {
                 return Result.Fail($"The nickname {userDto.Nickname} already exists.");
+            }
+
+            // Validate email
+            var emailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+            if (!emailRegex.IsMatch(userDto.Email))
+            {
+                // TODO: Add allowed email domains
+                return Result.Fail("Invalid email format.");
+            }
+
+            // Validate password
+            var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$");
+            if (!passwordRegex.IsMatch(userDto.Password))
+            {
+                return Result.Fail("Password must have at least 8 characters, one uppercase letter, one lowercase letter and one special character.");
             }
 
             // Map DTO to Domain Model and create user

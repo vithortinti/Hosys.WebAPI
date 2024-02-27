@@ -1,6 +1,6 @@
 using System.Reflection;
-using Hosys.Application.Interfaces.Services;
-using Hosys.Application.Services;
+using Hosys.Application.Interfaces.UseCases;
+using Hosys.Application.UseCases;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Persistence;
 using Hosys.Persistence.Repositories.User;
@@ -28,8 +28,8 @@ builder.Services.AddSingleton(
     new Database(config["ConnectionStrings:DefaultConnection"]!)
     );
 
-// Add services
-builder.Services.AddScoped<IUserService, UserService>();
+// Add use cases
+builder.Services.AddScoped<IUserUseCases, UserUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
