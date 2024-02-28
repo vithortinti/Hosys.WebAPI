@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using FluentResults;
 using Hosys.Domain.Interfaces.User;
 using MySql.Data.MySqlClient;
@@ -17,21 +15,7 @@ namespace Hosys.Persistence.Repositories.User
                 string sql = @"INSERT INTO `USER` 
                     (`ID`, `PUBLIC_ID`, `NAME`, `LAST_NAME`, `NICKNAME`, `E_MAIL`, `PASSWORD`, `ROLE`, `CREATED_AT`)
                     VALUES
-                    (@ID, @PUBLIC_ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);
-                    
-                    INSERT INTO `USER_RECOVERY`
-                    (`USER_ID`, `RECOVERY_KEY`, `CHANGE_PASSWORD_CODE`, `CHANGE_PASSWORD_CODE_EXPIRATION`)
-                    VALUES
-                    (@ID, @RECOVERY_KEY, @CHANGE_PASSWORD_CODE, @CHANGE_PASSWORD_CODE_EXPIRATION);
-                    
-                    INSERT INTO `USER_PREFERENCES`
-                    (`USER_ID`, `DARK_MODE`)
-                    VALUES
-                    (@ID, FALSE);";
-
-                string recoveryKey = ComputeSHA256Hash(
-                    Guid.NewGuid().ToString() + user.Name + user.LastName + user.Email + DateTime.Now.ToString()
-                    );
+                    (@ID, @PUBLIC_ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);";
 
                 string getPublicIdSql = "SELECT MAX(PUBLIC_ID) FROM `USER`";
                 
@@ -56,18 +40,18 @@ namespace Hosys.Persistence.Repositories.User
                     new MySqlParameter("@E_MAIL", user.Email),
                     new MySqlParameter("@PASSWORD", password),
                     new MySqlParameter("@ROLE", user.Role),
-                    new MySqlParameter("@CREATED_AT", user.CreatedAt),
-                    new MySqlParameter("@RECOVERY_KEY", recoveryKey),
-                    new MySqlParameter("@CHANGE_PASSWORD_CODE", null),
-                    new MySqlParameter("@CHANGE_PASSWORD_CODE_EXPIRATION", null)
+                    new MySqlParameter("@CREATED_AT", user.CreatedAt)
                 ];
                 _ = await _database.ExecuteCommandAsync(sql, parameters);
                 
                 return Result.Ok();
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail("An error occurred when creating the user.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when creating the user."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
@@ -88,9 +72,12 @@ namespace Hosys.Persistence.Repositories.User
 
                 return Result.Ok();
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail("An error occurred when deleting the user.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when deleting the user."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
@@ -129,9 +116,12 @@ namespace Hosys.Persistence.Repositories.User
                     CreatedAt = reader.GetDateTime(7)
                 });
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail("An error occurred when getting the user.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when getting the user."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
@@ -170,9 +160,12 @@ namespace Hosys.Persistence.Repositories.User
                     CreatedAt = reader.GetDateTime(7)
                 });
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail<Domain.Models.User.User>("An error occurred when getting the user by email.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when getting the user by email."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
@@ -211,9 +204,12 @@ namespace Hosys.Persistence.Repositories.User
                     CreatedAt = reader.GetDateTime(7)
                 });
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail<Domain.Models.User.User>("An error occurred when getting the user by email.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when getting the user by email."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
@@ -247,9 +243,12 @@ namespace Hosys.Persistence.Repositories.User
 
                 return Result.Ok();
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail("An error occurred when updating the user.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when updating the user."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
@@ -275,24 +274,17 @@ namespace Hosys.Persistence.Repositories.User
 
                 return Result.Ok();
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail("An error occurred when updating the user's password.");
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when updating the user's password."),
+                    new(ex.Message)
+                    });
             }
             finally
             {
                 _database.CloseConnection();
             }
-        }
-
-        private string ComputeSHA256Hash(string password)
-        {
-            using SHA256 sha256 = SHA256.Create();
-            return Convert.ToBase64String(
-                sha256.ComputeHash(
-                    Encoding.UTF8.GetBytes(password)
-                    )
-                );
         }
     }
 }
