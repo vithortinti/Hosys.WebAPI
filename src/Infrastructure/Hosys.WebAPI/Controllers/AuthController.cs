@@ -10,7 +10,14 @@ namespace Hosys.WebAPI.Controllers
     {
         private readonly IUserUseCases _userUseCases = userUseCases;
 
+        /// <summary>
+        /// Sign up a new user.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost("signup")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> SignUp([FromBody] CreateUserDTO user)
         {
             try
@@ -19,7 +26,7 @@ namespace Hosys.WebAPI.Controllers
                 if (result.IsFailed)
                     return BadRequest(new { message = result.Errors[0].Message });
                 
-                return Ok(result.Value);
+                return Ok(new { message = "User created successfully." });
             }
             catch
             {

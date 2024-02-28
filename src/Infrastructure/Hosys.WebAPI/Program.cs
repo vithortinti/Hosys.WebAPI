@@ -1,11 +1,13 @@
 using System.Reflection;
-using Hosys.Application.Interfaces.Security;
+using Hosys.Application.Interfaces.Security.Hash;
+using Hosys.Application.Interfaces.Security.Text;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.UseCases;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Persistence;
 using Hosys.Persistence.Repositories.User;
 using Hosys.Security.Hash;
+using Hosys.Security.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = new ConfigurationBuilder()
@@ -42,6 +44,7 @@ builder.Services.AddSingleton<IHash>(new Argon2Hash(
     config["Security:Argon2:Secret"]!,
     config["Security:Argon2:AssociatedData"]!
     ));
+builder.Services.AddScoped<ITextSecurityAnalyzer, TextSecurityAnalyzer>();
 
 var app = builder.Build();
 

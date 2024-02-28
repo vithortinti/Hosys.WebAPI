@@ -50,12 +50,15 @@ namespace Hosys.Persistence
 
         public void CloseConnection()
         {
-            _connection.Close();
+            if (_connection.State == ConnectionState.Open)
+            {
+                _connection.Close();
+            }
         }
 
         private void OpenConnection()
         {
-            if (_connection.State != ConnectionState.Open)
+            if (_connection.State == ConnectionState.Closed)
             {
                 _connection.Open();
             }
