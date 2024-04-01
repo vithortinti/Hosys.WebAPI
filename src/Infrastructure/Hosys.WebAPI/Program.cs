@@ -37,6 +37,7 @@ builder.Services.AddScoped<IUserUseCases, UserUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRecoveryRepository, UserRecoveryRepository>();
 
 // Add security layers
 builder.Services.AddSingleton<IHash>(new Argon2Hash(

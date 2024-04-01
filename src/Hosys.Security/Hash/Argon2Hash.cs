@@ -15,7 +15,7 @@ namespace Hosys.Security.Hash
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
             var argon2 = CreateArgon2id(inputBytes);
             
-            return Encoding.UTF8.GetString(await argon2.GetBytesAsync(128));
+            return Convert.ToBase64String(await argon2.GetBytesAsync(128));
         }
 
         public async Task<bool> VerifyAsync(string input, string hash)

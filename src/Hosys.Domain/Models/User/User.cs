@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Hosys.Domain.Models.User
 {
     /// <summary>
@@ -15,5 +13,6 @@ namespace Hosys.Domain.Models.User
         public required string Email { get; set; }
         public required string Role { get; set; }
         public DateTime CreatedAt { get; set; }
+        public UserRecovery? UserRecovery { get; set; }
     }
 }

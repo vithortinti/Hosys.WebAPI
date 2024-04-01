@@ -10,7 +10,11 @@ using Hosys.Domain.Models.User;
 
 namespace Hosys.Application.UseCases
 {
-    public class UserUseCases(IUserRepository userRepository, IHash hash, ITextSecurityAnalyzer textSecurityAnalyzer, IMapper mapper) : IUserUseCases
+    public class UserUseCases(
+        IUserRepository userRepository,
+        IHash hash, 
+        ITextSecurityAnalyzer textSecurityAnalyzer, 
+        IMapper mapper) : IUserUseCases
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IHash _hash = hash;
@@ -53,7 +57,7 @@ namespace Hosys.Application.UseCases
             if (nickname.IsSuccess)
                 return Result.Fail($"The nickname {userDto.Nickname} already exists.");
 
-            // Validate email
+            // Validate email format
             var emailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
             if (!emailRegex.IsMatch(userDto.Email))
             {
@@ -61,7 +65,7 @@ namespace Hosys.Application.UseCases
                 return Result.Fail("Invalid email format.");
             }
 
-            // Validate password
+            // Validate password security
             var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$");
             if (!passwordRegex.IsMatch(userDto.Password))
                 return Result.Fail("Password must have at least 8 characters, one uppercase letter, one lowercase letter and one special character.");

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using FluentResults;
 using Hosys.Domain.Interfaces.User;
 using MySql.Data.MySqlClient;
@@ -13,34 +15,38 @@ namespace Hosys.Persistence.Repositories.User
             try
             {
                 string sql = @"INSERT INTO `USER` 
-                    (`ID`, `PUBLIC_ID`, `NAME`, `LAST_NAME`, `NICKNAME`, `E_MAIL`, `PASSWORD`, `ROLE`, `CREATED_AT`)
+                    (`ID`, `NAME`, `LAST_NAME`, `NICKNAME`, `E_MAIL`, `PASSWORD`, `ROLE`, `CREATED_AT`)
                     VALUES
-                    (@ID, @PUBLIC_ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);";
+                    (@ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);
+                    
+                    INSERT INTO `USER_RECOVERY`
+                    (`USER_ID`, `RECOVERY_KEY`)
+                    VALUES
+                    (@ID, @RECOVERY_KEY);";
 
-                string getPublicIdSql = "SELECT MAX(PUBLIC_ID) FROM `USER`";
-                
-                int max;
-                using (var reader = await _database.ExecuteReaderAsync(getPublicIdSql))
+                string recoveryKey;
+                using (SHA256 sha256 = SHA256.Create())
                 {
-                    reader.Read();
+                    byte[] recoveryKeyBytes = sha256.ComputeHash(
+                        Encoding.UTF8.GetBytes($"{user.Id}{DateTime.Now.Millisecond}{Guid.NewGuid()}_{DateTime.Now}")
+                    );
 
-                    if (reader.HasRows && !reader.IsDBNull(0))
-                        max = reader.GetInt32(0);
-                    else
-                        max = 1000 - 1;
+                    recoveryKey = Convert.ToBase64String(recoveryKeyBytes);
+                    recoveryKey = recoveryKey.Remove(recoveryKey.Length - 2, 2)
+                        .ToUpper();
                 }
 
                 MySqlParameter[] parameters =
                 [
                     new MySqlParameter("@ID", user.Id != Guid.Empty ? user.Id : Guid.NewGuid()),
-                    new MySqlParameter("@PUBLIC_ID", max + 1),
                     new MySqlParameter("@NAME", user.Name),
                     new MySqlParameter("@LAST_NAME", user.LastName),
                     new MySqlParameter("@NICKNAME", user.NickName),
                     new MySqlParameter("@E_MAIL", user.Email),
                     new MySqlParameter("@PASSWORD", password),
                     new MySqlParameter("@ROLE", user.Role),
-                    new MySqlParameter("@CREATED_AT", user.CreatedAt)
+                    new MySqlParameter("@CREATED_AT", user.CreatedAt),
+                    new MySqlParameter("@RECOVERY_KEY", recoveryKey)
                 ];
                 _ = await _database.ExecuteCommandAsync(sql, parameters);
                 

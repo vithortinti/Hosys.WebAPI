@@ -1,5 +1,4 @@
 using System.Data.Common;
-using System.Data.SqlClient;
 using FluentResults;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Domain.Models.User;
@@ -10,6 +9,35 @@ namespace Hosys.Persistence.Repositories.User
     public class UserRecoveryRepository(Database database) : IUserRecoveryRepository
     {
         private readonly Database _database = database;
+
+        public async Task<Result> Create(Guid userId, string recoveryKey)
+        {
+            try
+            {
+                string sql = @"INSERT INTO `USER_RECOVERY`
+                    (`USER_ID`, `RECOVERY_KEY`)
+                    VALUES
+                    (@USER_ID, @RECOVERY_KEY)";
+
+                MySqlParameter[] parameters =
+                [
+                    new MySqlParameter("@USER_ID", userId),
+                    new MySqlParameter("@RECOVERY_KEY", recoveryKey)
+                ];
+
+                await _database.ExecuteCommandAsync(sql, parameters);
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new List<Error>
+                {
+                    new Error("An error occurred while trying to create the user recovery."),
+                    new Error(ex.Message)
+                });
+            }
+        }
 
         public async Task<Result<UserRecovery>> Get(Guid id)
         {
@@ -35,9 +63,13 @@ namespace Hosys.Persistence.Repositories.User
                     ChangePasswordCodeExpiration = reader.GetDateTime(3)
                 });
             }
-            catch
+            catch (Exception ex)
             {
-                return Result.Fail<UserRecovery>("An error occurred while trying to get the user recovery.");
+                return Result.Fail(new List<Error>
+                {
+                    new Error("An error occurred while trying to get the user recovery."),
+                    new Error(ex.Message)
+                });
             }
         }
 
