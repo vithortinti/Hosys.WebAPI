@@ -24,8 +24,9 @@ namespace Hosys.Services.Jwt.Handle
             // Insert the claims
             var indentity = new ClaimsIdentity();
             indentity.AddClaims([
-                new Claim("Id", user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Name),
+                new Claim("id", user.Id.ToString()),
+                new Claim("firstName", user.Name),
+                new Claim("lastName", user.LastName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
             ]);
