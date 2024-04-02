@@ -14,4 +14,8 @@
     <ProjectReference Include="..\..\Hosys.Domain\Hosys.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include=".\processes\python\pdf_converter.py" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
 </Project>
