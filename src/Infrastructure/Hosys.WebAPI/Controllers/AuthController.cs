@@ -1,5 +1,6 @@
-using Hosys.Application.Data.Outputs.User;
+using Hosys.Application.Data.Outputs.Auth;
 using Hosys.Application.Interfaces.UseCases;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hosys.WebAPI.Controllers
@@ -18,7 +19,7 @@ namespace Hosys.WebAPI.Controllers
         [HttpPost("signin")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> SignIn([FromBody] SignInUserDTO user)
+        public async Task<IActionResult> SignIn([FromBody] AuthSignInDTO user)
         {
             try
             {
@@ -26,7 +27,7 @@ namespace Hosys.WebAPI.Controllers
                 if (result.IsFailed)
                     return BadRequest(new { message = result.Errors[0].Message });
 
-                return Ok(new { token = result.Value });
+                return Ok(result.Value);
             }
             catch
             {

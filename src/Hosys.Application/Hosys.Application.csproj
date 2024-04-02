@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hosys.Domain\Hosys.Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Hosys.Services\Hosys.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

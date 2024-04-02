@@ -1,4 +1,4 @@
-namespace Hosys.Application.Data.Outputs.User
+namespace Hosys.Application.Data.Outputs.Auth
 {
     public class CreateUserDTO
     {

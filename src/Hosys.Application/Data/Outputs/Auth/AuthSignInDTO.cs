@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Hosys.Application.Data.Outputs.User
+namespace Hosys.Application.Data.Outputs.Auth
 {
     #nullable disable
-    public class SignInUserDTO
+    public class AuthSignInDTO
     {
         [Required]
         public string NickName { get; set; }
