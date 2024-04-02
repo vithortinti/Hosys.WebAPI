@@ -78,5 +78,33 @@ namespace Hosys.Application.UseCases
 
             return Result.Ok();
         }
+
+        public async Task<Result<string>> SignIn(SignInUserDTO userDto)
+        {
+            // Validate DTO
+            if (userDto == null)
+                return Result.Fail<string>("User cannot be null");
+            else if (string.IsNullOrEmpty(userDto.NickName))
+                return Result.Fail<string>("User name cannot be empty");
+            else if (string.IsNullOrEmpty(userDto.Password))
+                return Result.Fail<string>("Password cannot be empty");
+
+            // Get user by nickname
+            var userResult = await _userRepository.GetByNickname(userDto.NickName);
+            if (userResult.IsFailed)
+                return Result.Fail<string>("User not found.");
+
+            // Validate password
+            string passwordHash = await _hash.HashAsync(userDto.Password);
+            var user = userResult.Value;
+            var checkResult = await _userRepository.CheckPassword(user, passwordHash);
+            if (checkResult.IsSuccess)
+            {
+                if (checkResult.Value)
+                    return Result.Ok();
+            }
+
+            return Result.Fail<string>("Invalid password");
+        }
     }
 }

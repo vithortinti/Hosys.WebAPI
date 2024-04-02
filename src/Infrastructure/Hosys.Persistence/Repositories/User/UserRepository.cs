@@ -292,5 +292,33 @@ namespace Hosys.Persistence.Repositories.User
                 _database.CloseConnection();
             }
         }
+
+        public async Task<Result<bool>> CheckPassword(Domain.Models.User.User user, string password)
+        {
+            try
+            {
+                string sql = "SELECT PASSWORD FROM `USER` WHERE ID = @ID";
+
+                MySqlParameter id = new MySqlParameter("@ID", user.Id);
+
+                var reader = await _database.ExecuteReaderAsync(sql, id);
+                if (!reader.HasRows)
+                    return Result.Fail("The user was not found.");
+                reader.Read();
+                    
+                return Result.Ok(reader.GetString(0) == password);
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when updating the user's password."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
+        }
     }
 }
