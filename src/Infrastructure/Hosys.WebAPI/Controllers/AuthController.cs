@@ -1,6 +1,5 @@
 using Hosys.Application.Data.Outputs.Auth;
 using Hosys.Application.Interfaces.UseCases;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hosys.WebAPI.Controllers
