@@ -13,7 +13,7 @@ def main():
 def convert_to_image(pdf_file: str, image_path: str) -> str:
     images = convert_from_path(pdf_file)
     for i, image in enumerate(images):
-        image.save(f"{image_path}/page_{i+1}.jpg", "PNG")
+        image.save(f"{image_path}/page_{i+1}.jpg", "JPEG")
     return image_path
 
 if __name__ == "__main__":

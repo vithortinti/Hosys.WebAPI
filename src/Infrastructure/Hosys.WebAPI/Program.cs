@@ -4,8 +4,10 @@ using Hosys.Application.Interfaces.Security.Hash;
 using Hosys.Application.Interfaces.Security.Text;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.UseCases;
+using Hosys.Domain.Interfaces.Files;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Persistence;
+using Hosys.Persistence.Repositories.Files;
 using Hosys.Persistence.Repositories.User;
 using Hosys.Security.Hash;
 using Hosys.Security.Text;
@@ -92,10 +94,12 @@ builder.Services.AddSingleton(
 // Add use cases
 builder.Services.AddScoped<IUserUseCases, UserUseCases>();
 builder.Services.AddScoped<IPdfUseCases, PdfUseCases>();
+builder.Services.AddScoped<IFileHistoryUseCases, FileHistoryUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserRecoveryRepository, UserRecoveryRepository>();
+builder.Services.AddScoped<IFileHistoryRepository, FileHistoryRepository>();
 
 // Add security layers
 builder.Services.AddSingleton<IHash>(new Argon2Hash(

@@ -49,7 +49,9 @@ namespace Hosys.Application.UseCases
             
             return Result.Ok(new FileOutput
             {
-                Name = Path.GetFileName(filesFolder),
+                Name = Path.GetFileNameWithoutExtension(zipFile),
+                Path = zipFile,
+                Extension = ".zip",
                 FileStream = zipStream,
                 ContentType = "application/zip"
             });
