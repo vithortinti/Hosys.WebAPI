@@ -11,5 +11,6 @@ namespace Hosys.Domain.Interfaces.User
         Task<Result> Update(Models.User.User user);
         Task<Result> UpdatePassword(Guid id, string newPassword);
         Task<Result> Delete(Guid id);
+        Task<Result<bool>> CheckPassword(Models.User.User user, string password);
     }
 }

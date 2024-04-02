@@ -1,24 +1,27 @@
 using System.Text.RegularExpressions;
 using AutoMapper;
 using FluentResults;
-using Hosys.Application.Data.Outputs.User;
+using Hosys.Application.Data.Outputs.Auth;
 using Hosys.Application.Interfaces.Security.Hash;
 using Hosys.Application.Interfaces.Security.Text;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Domain.Models.User;
+using Hosys.Services.Jwt.Handle;
 
 namespace Hosys.Application.UseCases
 {
     public class UserUseCases(
         IUserRepository userRepository,
         IHash hash, 
-        ITextSecurityAnalyzer textSecurityAnalyzer, 
+        ITextSecurityAnalyzer textSecurityAnalyzer,
+        JwtService jwtService, 
         IMapper mapper) : IUserUseCases
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IHash _hash = hash;
         private readonly ITextSecurityAnalyzer _textSecurityAnalyzer = textSecurityAnalyzer;
+        private readonly JwtService _jwtService = jwtService;
         private readonly IMapper _mapper = mapper;
 
         public async Task<Result> CreateUser(CreateUserDTO userDto)
@@ -77,6 +80,38 @@ namespace Hosys.Application.UseCases
                 return Result.Fail(result.Errors);
 
             return Result.Ok();
+        }
+
+        public async Task<Result<AuthTokenDTO>> SignIn(AuthSignInDTO userDto)
+        {
+            // Validate DTO
+            if (userDto == null)
+                return Result.Fail("User cannot be null");
+            else if (string.IsNullOrEmpty(userDto.NickName))
+                return Result.Fail("User name cannot be empty");
+            else if (string.IsNullOrEmpty(userDto.Password))
+                return Result.Fail("Password cannot be empty");
+
+            // Get user by nickname
+            var userResult = await _userRepository.GetByNickname(userDto.NickName);
+            if (userResult.IsFailed)
+                return Result.Fail("User not found.");
+
+            // Validate password
+            string passwordHash = await _hash.HashAsync(userDto.Password);
+            var user = userResult.Value;
+            var checkResult = await _userRepository.CheckPassword(user, passwordHash);
+            if (checkResult.IsSuccess)
+            {
+                if (checkResult.Value)
+                {
+                    // Generate token
+                    var token = _jwtService.GenerateToken(user);
+                    return Result.Ok(_mapper.Map<AuthTokenDTO>(token));
+                }
+            }
+
+            return Result.Fail("Invalid password");
         }
     }
 }

@@ -1,5 +1,5 @@
 using AutoMapper;
-using Hosys.Application.Data.Outputs.User;
+using Hosys.Application.Data.Outputs.Auth;
 using Hosys.Domain.Models.User;
 
 namespace Hosys.Application.Profiles
