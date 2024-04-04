@@ -11,5 +11,10 @@ namespace Hosys.Security.Text
         {
             return _scriptTagRegex.IsMatch(text);
         }
+
+        public bool HasPathTraversal(string text)
+        {
+            return text.Contains("../");
+        }
     }
 }

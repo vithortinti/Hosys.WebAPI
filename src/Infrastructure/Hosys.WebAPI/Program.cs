@@ -95,6 +95,7 @@ builder.Services.AddSingleton(
 builder.Services.AddScoped<IUserUseCases, UserUseCases>();
 builder.Services.AddScoped<IPdfUseCases, PdfUseCases>();
 builder.Services.AddScoped<IFileHistoryUseCases, FileHistoryUseCases>();
+builder.Services.AddScoped<IFileUseCases, FileUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
