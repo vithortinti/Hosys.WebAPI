@@ -1,5 +1,5 @@
 using System.Text;
-using Hosys.Application.Interfaces.Security.Hash;
+using Hosys.Security.Interfaces;
 using Konscious.Security.Cryptography;
 
 namespace Hosys.Security.Hash

@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Hosys.Application.Interfaces.Security.Text;
+using Hosys.Security.Interfaces;
 
 namespace Hosys.Security.Text
 {

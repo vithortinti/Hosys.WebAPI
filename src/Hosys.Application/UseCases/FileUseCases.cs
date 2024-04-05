@@ -1,8 +1,8 @@
 using System.Reflection;
 using FluentResults;
 using Hosys.Application.Data.Outputs.File;
-using Hosys.Application.Interfaces.Security.Text;
 using Hosys.Application.Interfaces.UseCases;
+using Hosys.Security.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace Hosys.Application.UseCases
@@ -31,7 +31,7 @@ namespace Hosys.Application.UseCases
                 Directory.CreateDirectory(filesFolder);
 
             // Corrupt the file
-            var file = CorruptAndSaveFile(fileStream, filesFolder, formFile.FileName);
+            var file = await CorruptAndSaveFile(fileStream, filesFolder, formFile.FileName);
 
             // Return the file
             return Result.Ok(new FileOutput
@@ -44,20 +44,26 @@ namespace Hosys.Application.UseCases
             });
         }
 
-        private FileStream CorruptAndSaveFile(Stream fileStream, string path, string fileName)
+        private async Task<FileStream> CorruptAndSaveFile(Stream fileStream, string path, string fileName)
         {
             // Create a temporary file
-            string file = Path.Combine(path, fileName);
-            using (FileStream fs = new(file, FileMode.Create))
+            FileStream result = null!;
+            await Task.Run(() =>
             {
-                fileStream.CopyTo(fs);
-            }
+                string file = Path.Combine(path, fileName);
+                using (FileStream fs = new(file, FileMode.Create))
+                {
+                    fileStream.CopyTo(fs);
+                }
 
-            // Corrupt the file
-            byte[] fileBytes = File.ReadAllBytes(file);
-            fileBytes[0] = 0x00;
-            File.WriteAllBytes(file, fileBytes);
-            return new FileStream(file, FileMode.Open, FileAccess.Read);
+                // Corrupt the file
+                byte[] fileBytes = File.ReadAllBytes(file);
+                fileBytes[0] = 0x00;
+                File.WriteAllBytes(file, fileBytes);
+                result = new FileStream(file, FileMode.Open, FileAccess.Read);
+            });
+
+            return result;
         }
     }
 }

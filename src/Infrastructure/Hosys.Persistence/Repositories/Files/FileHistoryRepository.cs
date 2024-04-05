@@ -45,14 +45,98 @@ namespace Hosys.Persistence.Repositories.Files
             }
         }
 
+        public async Task<Result> Delete(Guid id)
+        {
+            try
+            {
+                string sql = "DELETE FROM `FILE_HISTORY` WHERE `ID` = @Id;";
+                MySqlParameter parameter = new("@Id", id);
+
+                _ = await _database.ExecuteCommandAsync(sql, parameter);
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occured while deleting the file history."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
+        }
+
+        public async Task<Result> DeleteAllFromUser(Guid userId)
+        {
+            try
+            {
+                string sql = "DELETE FROM `FILE_HISTORY` WHERE `USER_ID` = @UserId;";
+                MySqlParameter parameter = new("@UserId", userId);
+
+                _ = await _database.ExecuteCommandAsync(sql, parameter);
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occured while deleting the file history."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
+        }
+
         public Task<Result<FileHistory>> GetById(Guid id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Result<List<FileHistory>>> GetByUserId(Guid id)
+        public async Task<Result<List<FileHistory>>> GetByUserId(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string sql = "SELECT * FROM `FILE_HISTORY` WHERE `USER_ID` = @UserId;";
+                MySqlParameter parameter = new("@UserId", id);
+
+                var reader = await _database.ExecuteReaderAsync(sql, parameter);
+                if (!reader.HasRows)
+                    return Result.Fail<List<FileHistory>>("No files found for the user.");
+
+                List<FileHistory> files = new();
+                while (reader.Read())
+                {
+                    files.Add(new FileHistory
+                    {
+                        Id = reader.GetGuid(0),
+                        UserId = reader.GetGuid(1),
+                        FileName = reader.GetString(2),
+                        FileExtension = reader.GetString(3),
+                        ContentType = reader.GetString(4),
+                        FilePath = reader.GetString(5),
+                        CreatedAt = reader.GetDateTime(6)
+                    });
+                }
+
+                return Result.Ok(files);
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occured while deleting the file history."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
         }
     }
 }

@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
+    <ProjectReference Include="..\Hosys.Security\Hosys.Security.csproj" />
+    <ProjectReference Include="..\Infrastructure\Hosys.Persistence\Hosys.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

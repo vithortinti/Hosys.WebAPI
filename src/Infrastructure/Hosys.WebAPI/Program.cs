@@ -1,15 +1,17 @@
 using System.Reflection;
 using System.Text;
-using Hosys.Application.Interfaces.Security.Hash;
-using Hosys.Application.Interfaces.Security.Text;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.UseCases;
 using Hosys.Domain.Interfaces.Files;
 using Hosys.Domain.Interfaces.User;
+using Hosys.Identity;
+using Hosys.Identity.Helpers;
+using Hosys.Identity.Interfaces;
 using Hosys.Persistence;
 using Hosys.Persistence.Repositories.Files;
 using Hosys.Persistence.Repositories.User;
 using Hosys.Security.Hash;
+using Hosys.Security.Interfaces;
 using Hosys.Security.Text;
 using Hosys.Services.Files.Pdf;
 using Hosys.Services.Jwt.Handle;
@@ -92,10 +94,11 @@ builder.Services.AddSingleton(
     );
 
 // Add use cases
-builder.Services.AddScoped<IUserUseCases, UserUseCases>();
+builder.Services.AddScoped<IAuthUseCases, AuthUseCases>();
 builder.Services.AddScoped<IPdfUseCases, PdfUseCases>();
 builder.Services.AddScoped<IFileHistoryUseCases, FileHistoryUseCases>();
 builder.Services.AddScoped<IFileUseCases, FileUseCases>();
+builder.Services.AddScoped<IUserUseCases, UserUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -118,6 +121,13 @@ builder.Services.AddSingleton(new JwtService(
     int.Parse(config["Security:Jwt:ExpireIn"]!)
     ));
 builder.Services.AddScoped<PdfService>();
+
+// Add helpers
+builder.Services.AddScoped<DeleteUserHelper>();
+
+// Identity
+builder.Services.AddScoped<IIdentityManager, IdentityManager>();
+builder.Services.AddScoped<IIdentityValidator, IdentityValidator>();
 
 var app = builder.Build();
 

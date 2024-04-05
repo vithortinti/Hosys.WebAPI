@@ -6,9 +6,9 @@ namespace Hosys.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController(IUserUseCases userUseCases) : ControllerBase
+    public class AuthController(IAuthUseCases userUseCases) : ControllerBase
     {
-        private readonly IUserUseCases _userUseCases = userUseCases;
+        private readonly IAuthUseCases _userUseCases = userUseCases;
 
         /// <summary>
         /// Sign in a user.
@@ -46,7 +46,7 @@ namespace Hosys.WebAPI.Controllers
         {
             try
             {
-                var result = await _userUseCases.CreateUser(user);
+                var result = await _userUseCases.SignUp(user);
                 if (result.IsFailed)
                     return BadRequest(new { message = result.Errors[0].Message });
                 

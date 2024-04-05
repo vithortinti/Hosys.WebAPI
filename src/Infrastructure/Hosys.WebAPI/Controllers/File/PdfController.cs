@@ -24,7 +24,7 @@ namespace Hosys.WebAPI.Controllers.File
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
-        [Authorize(Roles = "ADMIN, USER")]
+        [Authorize]
         public async Task<IActionResult> ConvertToImage([FromForm] FileInput fileInput)
         {
             try

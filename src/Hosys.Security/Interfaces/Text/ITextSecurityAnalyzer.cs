@@ -1,4 +1,4 @@
-namespace Hosys.Application.Interfaces.Security.Text
+namespace Hosys.Security.Interfaces
 {
     public interface ITextSecurityAnalyzer
     {

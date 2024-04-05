@@ -37,6 +37,10 @@ namespace Hosys.Persistence.Repositories.User
                     new Error(ex.Message)
                 });
             }
+            finally
+            {
+                _database.CloseConnection();
+            }
         }
 
         public async Task<Result<UserRecovery>> Get(Guid id)
@@ -71,6 +75,10 @@ namespace Hosys.Persistence.Repositories.User
                     new Error(ex.Message)
                 });
             }
+            finally
+            {
+                _database.CloseConnection();
+            }
         }
 
         public Task<Result> Update(UserRecovery user)
@@ -78,9 +86,28 @@ namespace Hosys.Persistence.Repositories.User
             throw new NotImplementedException();
         }
 
-        public Task<Result> Delete(Guid id)
+        public async Task<Result> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string sql = @"DELETE FROM `USER_RECOVERY`
+                    WHERE `USER_ID` = @ID";
+                
+                _ = await _database.ExecuteCommandAsync(sql, new MySqlParameter("@ID", id));
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occurred when deleting the user recovery."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
         }
     }
 }

@@ -10,47 +10,30 @@ namespace Hosys.Persistence.Repositories.User
     {
         private readonly Database _database = database;
 
-        public async Task<Result> Create(Domain.Models.User.User user, string password)
+        public async Task<Result<Domain.Models.User.User>> Create(Domain.Models.User.User user, string password)
         {
             try
             {
                 string sql = @"INSERT INTO `USER` 
                     (`ID`, `NAME`, `LAST_NAME`, `NICKNAME`, `E_MAIL`, `PASSWORD`, `ROLE`, `CREATED_AT`)
                     VALUES
-                    (@ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);
-                    
-                    INSERT INTO `USER_RECOVERY`
-                    (`USER_ID`, `RECOVERY_KEY`)
-                    VALUES
-                    (@ID, @RECOVERY_KEY);";
+                    (@ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);";
 
-                string recoveryKey;
-                using (SHA256 sha256 = SHA256.Create())
-                {
-                    byte[] recoveryKeyBytes = sha256.ComputeHash(
-                        Encoding.UTF8.GetBytes($"{user.Id}{DateTime.Now.Millisecond}{Guid.NewGuid()}_{DateTime.Now}")
-                    );
-
-                    recoveryKey = Convert.ToBase64String(recoveryKeyBytes);
-                    recoveryKey = recoveryKey.Remove(recoveryKey.Length - 2, 2)
-                        .ToUpper();
-                }
-
+                user.Id = user.Id != Guid.Empty ? user.Id : Guid.NewGuid();
                 MySqlParameter[] parameters =
                 [
-                    new MySqlParameter("@ID", user.Id != Guid.Empty ? user.Id : Guid.NewGuid()),
+                    new MySqlParameter("@ID", user.Id),
                     new MySqlParameter("@NAME", user.Name),
                     new MySqlParameter("@LAST_NAME", user.LastName),
                     new MySqlParameter("@NICKNAME", user.NickName),
                     new MySqlParameter("@E_MAIL", user.Email),
                     new MySqlParameter("@PASSWORD", password),
                     new MySqlParameter("@ROLE", user.Role),
-                    new MySqlParameter("@CREATED_AT", user.CreatedAt),
-                    new MySqlParameter("@RECOVERY_KEY", recoveryKey)
+                    new MySqlParameter("@CREATED_AT", user.CreatedAt)
                 ];
                 _ = await _database.ExecuteCommandAsync(sql, parameters);
                 
-                return Result.Ok();
+                return Result.Ok(user);
             }
             catch (Exception ex)
             {
@@ -299,19 +282,22 @@ namespace Hosys.Persistence.Repositories.User
             {
                 string sql = "SELECT PASSWORD FROM `USER` WHERE ID = @ID";
 
-                MySqlParameter id = new MySqlParameter("@ID", user.Id);
+                MySqlParameter id = new("@ID", user.Id);
 
                 var reader = await _database.ExecuteReaderAsync(sql, id);
                 if (!reader.HasRows)
                     return Result.Fail("The user was not found.");
                 reader.Read();
-                    
-                return Result.Ok(reader.GetString(0) == password);
+
+                if (reader.GetString(0) != password)
+                    return Result.Fail("The password is incorrect.");
+                
+                return Result.Ok(true);
             }
             catch (Exception ex)
             {
                 return Result.Fail(new Error[] { 
-                    new("An error occurred when updating the user's password."),
+                    new("An error occurred when checking the user's password."),
                     new(ex.Message)
                     });
             }

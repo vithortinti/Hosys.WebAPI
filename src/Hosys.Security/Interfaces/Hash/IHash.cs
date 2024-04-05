@@ -1,4 +1,4 @@
-namespace Hosys.Application.Interfaces.Security.Hash
+namespace Hosys.Security.Interfaces
 {
     public interface IHash
     {
