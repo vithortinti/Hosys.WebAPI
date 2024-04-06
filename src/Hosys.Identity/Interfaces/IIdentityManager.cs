@@ -9,5 +9,6 @@ namespace Hosys.Identity.Interfaces
         Task<Result> UpdateUser(Domain.Models.User.User user);
         Task<Result<string>> GetRecoveryKey(Guid userId);
         Task<Result<Domain.Models.User.User>> GetUserByNickname(string nickname);
+        Task<Result<Domain.Models.User.User>> GetUserById(Guid userId);
     }
 }

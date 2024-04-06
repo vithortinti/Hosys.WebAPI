@@ -57,6 +57,11 @@ namespace Hosys.Identity
             return Result.Ok(userRecovery.Value.RecoveryKey);
         }
 
+        public Task<Result<User>> GetUserById(Guid userId)
+        {
+            return userRepository.Get(userId);
+        }
+
         public async Task<Result<User>> GetUserByNickname(string nickname)
         {
             return await userRepository.GetByNickname(nickname);

@@ -34,7 +34,9 @@ namespace Hosys.Application.UseCases
             string file = SaveFile(pdfStream, filesFolder);
 
             // Create the python command
-            await _pdfService.ConvertoToImage(file, filesFolder);
+            Result convertResult = await _pdfService.ConvertoToImage(file, filesFolder);
+            if (convertResult.IsFailed)
+                return Result.Fail(convertResult.Errors[0].Message);
 
             // Delete the pdf file
             File.Delete(file);

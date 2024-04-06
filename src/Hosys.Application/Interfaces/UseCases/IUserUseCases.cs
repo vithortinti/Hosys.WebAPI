@@ -4,6 +4,6 @@ namespace Hosys.Application.Interfaces.UseCases
 {
     public interface IUserUseCases
     {
-        Task<Result> DeleteUser(Guid id);
+        Task<Result> DeleteUser(Guid id, string confirmPassword);
     }
 }
