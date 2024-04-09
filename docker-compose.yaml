@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
+      - MYSQL_DATABASE=Hosys
+    volumes:
+      - ./mysql/initial-db.sql:/docker-entrypoint-initdb.d/initial-db.sql
+    ports:
+      - "3307:3306"
+    secrets:
+      - db_root_password
+
+secrets:
+  db_root_password:
+    file: ./secrets/docker/db_root_password.txt
