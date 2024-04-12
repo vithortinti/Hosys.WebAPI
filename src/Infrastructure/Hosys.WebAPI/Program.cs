@@ -88,6 +88,17 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("User", policy => policy.RequireRole("USER"));
 });
 
+// Add CORS
+builder.Services.AddCors(opts =>
+{
+    opts.AddDefaultPolicy(builder => 
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 // Add database connection
 builder.Services.AddSingleton(
     new Database(config["ConnectionStrings:DefaultConnection"]!)
