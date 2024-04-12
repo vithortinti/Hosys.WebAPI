@@ -10,7 +10,21 @@ services:
       - "3307:3306"
     secrets:
       - db_root_password
+    networks:
+      - default
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - default
 
 secrets:
   db_root_password:
     file: ./secrets/docker/db_root_password.txt
+
+networks:
+  default:
+    driver: bridge
