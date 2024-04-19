@@ -101,7 +101,7 @@ builder.Services.AddCors(opts =>
 
 // Add database connection
 builder.Services.AddSingleton(
-    new Database(config["ConnectionStrings:DefaultConnection"]!)
+    new Database(config["ConnectionString:DefaultConnection"]!)
     );
 
 // Add use cases

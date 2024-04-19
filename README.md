@@ -16,7 +16,9 @@ The application contains some dependencies that are not in this repository. Secr
 First, there are the application secrets, which indicate the connection to the database, database passwords and the cryptographic security methods or hashes.
 ```json
 {
-  "ConnectionString": "string",
+  "ConnectionString": {
+    "DefaultConnection": "string"
+  },
   "Security": {
     "Argon2": {
       "Salt": "string",
