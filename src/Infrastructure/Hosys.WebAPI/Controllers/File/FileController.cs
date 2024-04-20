@@ -2,6 +2,7 @@ using FluentResults;
 using Hosys.Application.Data.Outputs.File;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.Ports;
+using JsonPatch;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -126,8 +127,9 @@ namespace Hosys.WebAPI.Controllers.File
         }
 
         [HttpDelete("delete/{fileId}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(204)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         [Authorize]
         public async Task<IActionResult> DeleteFile(Guid fileId)
         {
@@ -136,6 +138,30 @@ namespace Hosys.WebAPI.Controllers.File
                 Result result = await fileHistoryUseCases.DeleteFile(
                     Guid.Parse(User.FindFirst("Id")!.Value), 
                     fileId
+                    );
+                if (result.IsFailed)
+                    return BadRequest(new { message = result.Errors[0].Message });
+
+                return NoContent();
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "An unexpected error occured." });
+            }
+        }
+
+        [HttpPut("update/{fileId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateFileMetadata(Guid fileId, UpdateFileHistoryDTO updateFileHistoryDTO)
+        {
+            try
+            {
+                Result result = await fileHistoryUseCases.UpdateFileName(
+                    Guid.Parse(User.FindFirst("Id")!.Value), 
+                    fileId, 
+                    updateFileHistoryDTO
                     );
                 if (result.IsFailed)
                     return BadRequest(new { message = result.Errors[0].Message });

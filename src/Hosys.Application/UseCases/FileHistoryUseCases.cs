@@ -44,7 +44,9 @@ namespace Hosys.Application.UseCases
                 return Result.Fail("File not found.");
 
             // Second, delete the file history data from the database
-            _ = await fileHistoryRepository.Delete(fileId);
+            Result deleteResult = await fileHistoryRepository.Delete(fileId);
+            if (deleteResult.IsFailed)
+                return Result.Fail(deleteResult.Errors);
             
             // Finally, delete the physical file
             File.Delete(fileHistory.Value.FilePath!);
@@ -92,6 +94,34 @@ namespace Hosys.Application.UseCases
                 Path = fileHistory.Value.FilePath!,
                 FileStream = new FileStream(fileHistory.Value.FilePath!, FileMode.Open, FileAccess.Read)
             });
+        }
+
+        public async Task<Result> UpdateFileName(Guid userId, Guid fileId, UpdateFileHistoryDTO updateFileHistoryDTO)
+        {
+            // Validate the input
+            if (userId == Guid.Empty)
+                return Result.Fail("The user id is required or the Guid isn't valid.");
+            if (fileId == Guid.Empty)
+                return Result.Fail("The file id is required or the Guid isn't valid.");
+            if (updateFileHistoryDTO == null)
+                return Result.Fail("The update file history is required.");
+
+            // Check if the file belongs to the user
+            Result<FileHistory> file = 
+                await fileHistoryRepository.GetById(fileId);
+            if (file.IsFailed)
+                return Result.Fail(file.Errors);
+            if (file.Value.UserId != userId) 
+                return Result.Fail("File not found.");
+
+            // Update the file history
+            var fileHistory = file.Value;
+            fileHistory.FileName = updateFileHistoryDTO.FileName;
+            Result updateResult = await fileHistoryRepository.Update(fileHistory);
+            if (updateResult.IsFailed)
+                return Result.Fail(updateResult.Errors);
+
+            return Result.Ok();
         }
     }
 }

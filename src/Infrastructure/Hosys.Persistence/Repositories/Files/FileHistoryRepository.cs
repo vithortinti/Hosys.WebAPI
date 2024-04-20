@@ -232,5 +232,35 @@ namespace Hosys.Persistence.Repositories.Files
                 _database.CloseConnection();
             }
         }
+
+        public async Task<Result> Update(FileHistory fileHistory)
+        {
+            try
+            {
+                string sql = @"UPDATE `FILE_HISTORY`
+                    SET `FILE_NAME` = @FileName
+                    WHERE `ID` = @Id;";
+
+                MySqlParameter[] parameters = [
+                    new("@FileName", fileHistory.FileName),
+                    new("@Id", fileHistory.Id)
+                ];
+
+                _ = await _database.ExecuteCommandAsync(sql, parameters);
+
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occured while updating the file history."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
+        }
     }
 }
