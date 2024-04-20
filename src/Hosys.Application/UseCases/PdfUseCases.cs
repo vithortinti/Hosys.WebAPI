@@ -3,13 +3,12 @@ using System.Reflection;
 using FluentResults;
 using Hosys.Application.Data.Outputs.File;
 using Hosys.Application.Interfaces.UseCases;
-using Hosys.Domain.Interfaces.Files;
 using Hosys.Services.Files.Pdf;
 using Microsoft.AspNetCore.Http;
 
 namespace Hosys.Application.UseCases
 {
-    public class PdfUseCases(PdfService pdfService, IFileHistoryRepository fileHistoryRepository) : IPdfUseCases
+    public class PdfUseCases(PdfService pdfService) : IPdfUseCases
     {
         public async Task<Result<FileOutput>> ConvertToImage(IFormFile formFile)
         {
