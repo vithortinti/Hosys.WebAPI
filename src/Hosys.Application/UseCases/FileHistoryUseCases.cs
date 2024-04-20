@@ -42,5 +42,32 @@ namespace Hosys.Application.UseCases
 
             return Result.Ok(mapper.Map<IEnumerable<ReadFileHistoryDTO>>(userFiles.Value));
         }
+
+        public async Task<Result<FileOutput>> GetFileStream(Guid userId, Guid fileId)
+        {
+            // Validate the input
+            if (userId == Guid.Empty)
+                return Result.Fail("The user id is required or the Guid isn't valid.");
+            if (fileId == Guid.Empty)
+                return Result.Fail("The file id is required or the Guid isn't valid.");
+
+            Result<FileHistory> fileHistory = 
+                await fileHistoryRepository.GetById(fileId);
+            if (fileHistory.IsFailed)
+                return Result.Fail(fileHistory.Errors);
+
+            // Check if the file belongs to the user
+            if (fileHistory.Value.UserId != userId)
+                return Result.Fail("File not found.");
+
+            return Result.Ok(new FileOutput
+            {
+                Name = fileHistory.Value.FileName!,
+                ContentType = fileHistory.Value.ContentType!,
+                Extension = fileHistory.Value.FileExtension!,
+                Path = fileHistory.Value.FilePath!,
+                FileStream = new FileStream(fileHistory.Value.FilePath!, FileMode.Open, FileAccess.Read)
+            });
+        }
     }
 }

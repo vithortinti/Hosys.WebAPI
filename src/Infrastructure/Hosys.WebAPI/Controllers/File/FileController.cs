@@ -99,5 +99,30 @@ namespace Hosys.WebAPI.Controllers.File
                 return BadRequest(new { message = "An unexpected error occured." });
             }
         }
+
+        [HttpGet("download/{fileId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [Authorize]
+        public async Task<IActionResult> DownloadFile(Guid fileId)
+        {
+            try
+            {
+                Result<FileOutput> result = await fileHistoryUseCases.GetFileStream(
+                    Guid.Parse(User.FindFirst("Id")!.Value), 
+                    fileId
+                    );
+                if (result.IsFailed)
+                    return BadRequest(new { message = result.Errors[0].Message });
+
+                return File(result.Value.FileStream, result.Value.ContentType, result.Value.Name);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "An unexpected error occured." });
+            }
+        }
     }
 }

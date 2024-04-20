@@ -93,9 +93,49 @@ namespace Hosys.Persistence.Repositories.Files
             }
         }
 
-        public Task<Result<FileHistory>> GetById(Guid id)
+        public async Task<Result<FileHistory>> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string sql = @"SELECT `ID`, 
+                    `USER_ID`, 
+                    `FILE_NAME`, 
+                    `FILE_EXTENSION`,
+                    `CONTENT_TYPE`,
+                    `FILE_PATH`,
+                    `CREATED_AT` FROM `FILE_HISTORY` WHERE `ID` = @Id;";
+
+                MySqlParameter parameter = new("@Id", id);
+
+                var reader = await _database.ExecuteReaderAsync(sql, parameter);
+
+                if (!reader.HasRows)
+                    return Result.Fail<FileHistory>("File not found.");
+
+                reader.Read();
+
+                return new FileHistory()
+                {
+                    Id = reader.GetGuid(0),
+                    UserId = reader.GetGuid(1),
+                    FileName = reader.GetString(2),
+                    FileExtension = reader.GetString(3),
+                    ContentType = reader.GetString(4),
+                    FilePath = reader.GetString(5),
+                    CreatedAt = reader.GetDateTime(6)
+                };
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(new Error[] { 
+                    new("An error occured while getting the file."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
         }
 
         public async Task<Result<List<FileHistory>>> GetByUserId(Guid id)
@@ -129,7 +169,7 @@ namespace Hosys.Persistence.Repositories.Files
             catch (Exception ex)
             {
                 return Result.Fail(new Error[] { 
-                    new("An error occured while deleting the file history."),
+                    new("An error occured while getting the file."),
                     new(ex.Message)
                     });
             }
@@ -143,7 +183,15 @@ namespace Hosys.Persistence.Repositories.Files
         {
             try
             {
-                string sql = "SELECT * FROM `FILE_HISTORY` WHERE `USER_ID` = @UserId LIMIT @Skip, @Take;";
+                string sql = @"SELECT 
+                    `ID`, 
+                    `USER_ID`, 
+                    `FILE_NAME`, 
+                    `FILE_EXTENSION`,
+                    `CONTENT_TYPE`,
+                    `FILE_PATH`,
+                    `CREATED_AT`
+                    FROM `FILE_HISTORY` WHERE `USER_ID` = @UserId LIMIT @Skip, @Take;";
 
                 MySqlParameter[] parameters = [
                     new("@UserId", id),
@@ -175,7 +223,7 @@ namespace Hosys.Persistence.Repositories.Files
             catch (Exception ex)
             {
                 return Result.Fail(new Error[] { 
-                    new("An error occured while deleting the file history."),
+                    new("An error occured while getting the file."),
                     new(ex.Message)
                     });
             }
