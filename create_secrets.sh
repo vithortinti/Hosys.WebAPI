@@ -7,7 +7,7 @@ mkdir docker
 cd ..
 
 # Create a `db_root_password.txt` file
-echo "defaultPassword123#" > secrets/docker/db_root_password.txt
+echo "rootpass" > secrets/docker/db_root_password.txt
 
 # Create a `secrets.json` file with the following content
 echo '{
