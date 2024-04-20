@@ -17,7 +17,7 @@ First, there are the application secrets, which indicate the connection to the d
 ```json
 {
   "ConnectionString": {
-    "DefaultConnection": "string"
+    "DefaultConnection": "server=172.20.0.10;port=3306;uid=root;pwd={Your_DB_Password};database=Hosys"
   },
   "Security": {
     "Argon2": {
@@ -34,7 +34,7 @@ First, there are the application secrets, which indicate the connection to the d
   }
 }
 ```
-> Note: For the `ExpiraIn` key, you need to specify the time in minutes that the token will expire.
+> Note: For the `ExpireIn` key, you need to specify the time in minutes that the token will expire.
 
 ### Linux secrets
 For Linux, the `secrets.json` must be stored inside the root directory of the [`Hosys.WebAPI`](/src/Infrastructure/Hosys.WebAPI) component containing the following contents.
