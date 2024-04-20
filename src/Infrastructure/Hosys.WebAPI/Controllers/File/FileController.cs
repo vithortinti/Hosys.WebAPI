@@ -124,5 +124,28 @@ namespace Hosys.WebAPI.Controllers.File
                 return StatusCode(500, new { message = "An unexpected error occured." });
             }
         }
+
+        [HttpDelete("delete/{fileId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [Authorize]
+        public async Task<IActionResult> DeleteFile(Guid fileId)
+        {
+            try
+            {
+                Result result = await fileHistoryUseCases.DeleteFile(
+                    Guid.Parse(User.FindFirst("Id")!.Value), 
+                    fileId
+                    );
+                if (result.IsFailed)
+                    return BadRequest(new { message = result.Errors[0].Message });
+
+                return NoContent();
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "An unexpected error occured." });
+            }
+        }
     }
 }

@@ -28,6 +28,30 @@ namespace Hosys.Application.UseCases
             return Result.Ok();
         }
 
+        public async Task<Result> DeleteFile(Guid userId, Guid fileId)
+        {
+            if (userId == Guid.Empty)
+                return Result.Fail("The user id is required or the Guid isn't valid.");
+            if (fileId == Guid.Empty)
+                return Result.Fail("The file id is required or the Guid isn't valid.");
+
+            // First, check if the fileId belongs to the user
+            Result<FileHistory> fileHistory = 
+                await fileHistoryRepository.GetById(fileId);
+            if (fileHistory.IsFailed)
+                return Result.Fail(fileHistory.Errors);
+            if (fileHistory.Value.UserId != userId)
+                return Result.Fail("File not found.");
+
+            // Second, delete the file history data from the database
+            _ = await fileHistoryRepository.Delete(fileId);
+            
+            // Finally, delete the physical file
+            File.Delete(fileHistory.Value.FilePath!);
+
+            return Result.Ok();
+        }
+
         public async Task<Result<IEnumerable<ReadFileHistoryDTO>>> GetByUserId(Guid userId, int skip = 0, int take = 5)
         {
             // Vaida a entrada
