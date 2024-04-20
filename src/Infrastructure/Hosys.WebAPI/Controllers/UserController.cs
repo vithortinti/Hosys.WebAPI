@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hosys.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route(AppConfiguration.API_ROUTE + "[controller]")]
     [Authorize]
     public class UserController(
         IUserUseCases userUseCases
@@ -24,7 +24,7 @@ namespace Hosys.WebAPI.Controllers
                     Guid.Parse(User.FindFirst("id")!.Value), confirmPassword.Password
                     );
                 if (result.IsSuccess)
-                    return Ok(new { message = "User deleted successfully." });
+                    return NoContent();
                 else
                     return BadRequest(new { message = result.Errors[0].Message });
             }

@@ -6,5 +6,6 @@ namespace Hosys.Application.Interfaces.UseCases
     public interface IFileHistoryUseCases
     {
         Task<Result> Create(CreateFileHistoryDTO fileHistory, Guid userId);
+        Task<Result<IEnumerable<ReadFileHistoryDTO>>> GetByUserId(Guid userId, int skip = 0, int take = 5);
     }
 }

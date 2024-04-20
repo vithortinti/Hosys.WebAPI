@@ -12,9 +12,6 @@ namespace Hosys.Application.UseCases
         IMapper mapper
         ) : IFileHistoryUseCases
     {
-        private readonly IFileHistoryRepository _fileHistoryRepository = fileHistoryRepository;
-        private readonly IMapper _mapper = mapper;
-
         public async Task<Result> Create(CreateFileHistoryDTO fileHistory, Guid userId)
         {
             // Validate the input
@@ -24,11 +21,26 @@ namespace Hosys.Application.UseCases
                 return Result.Fail(new Error("The user ID is required."));
 
             // Create the file history
-            var result = await _fileHistoryRepository.Create(_mapper.Map<FileHistory>(fileHistory), userId);
+            var result = await fileHistoryRepository.Create(mapper.Map<FileHistory>(fileHistory), userId);
             if (result.IsFailed)
-                return Result.Fail(result.Errors[0]);
+                return Result.Fail(result.Errors);
 
             return Result.Ok();
+        }
+
+        public async Task<Result<IEnumerable<ReadFileHistoryDTO>>> GetByUserId(Guid userId, int skip = 0, int take = 5)
+        {
+            // Vaida a entrada
+            if (userId == Guid.Empty)
+                return Result.Fail("The user id is required or the Guid isn't valid.");
+
+            Result<List<FileHistory>> userFiles = 
+                await fileHistoryRepository.GetByUserId(userId, skip, take);
+
+            if (userFiles.IsFailed)
+                return Result.Fail(userFiles.Errors);
+
+            return Result.Ok(mapper.Map<IEnumerable<ReadFileHistoryDTO>>(userFiles.Value));
         }
     }
 }

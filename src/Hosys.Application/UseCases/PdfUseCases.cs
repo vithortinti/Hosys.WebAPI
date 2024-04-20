@@ -3,15 +3,14 @@ using System.Reflection;
 using FluentResults;
 using Hosys.Application.Data.Outputs.File;
 using Hosys.Application.Interfaces.UseCases;
+using Hosys.Domain.Interfaces.Files;
 using Hosys.Services.Files.Pdf;
 using Microsoft.AspNetCore.Http;
 
 namespace Hosys.Application.UseCases
 {
-    public class PdfUseCases(PdfService pdfService) : IPdfUseCases
+    public class PdfUseCases(PdfService pdfService, IFileHistoryRepository fileHistoryRepository) : IPdfUseCases
     {
-        private readonly PdfService _pdfService = pdfService;
-
         public async Task<Result<FileOutput>> ConvertToImage(IFormFile formFile)
         {
             // Check the file size
@@ -34,7 +33,7 @@ namespace Hosys.Application.UseCases
             string file = SaveFile(pdfStream, filesFolder);
 
             // Create the python command
-            Result convertResult = await _pdfService.ConvertoToImage(file, filesFolder);
+            Result convertResult = await pdfService.ConvertoToImage(file, filesFolder);
             if (convertResult.IsFailed)
                 return Result.Fail(convertResult.Errors[0].Message);
 

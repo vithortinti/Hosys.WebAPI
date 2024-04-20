@@ -9,6 +9,7 @@ namespace Hosys.Application.Profiles
         public FileHistoryProfile()
         {
             CreateMap<CreateFileHistoryDTO, FileHistory>();
+            CreateMap<FileHistory, ReadFileHistoryDTO>();
         }
     }
 }

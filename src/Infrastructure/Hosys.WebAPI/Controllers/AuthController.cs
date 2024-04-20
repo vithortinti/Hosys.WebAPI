@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hosys.WebAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route(AppConfiguration.API_ROUTE + "[controller]")]
     public class AuthController(IAuthUseCases userUseCases) : ControllerBase
     {
         private readonly IAuthUseCases _userUseCases = userUseCases;
