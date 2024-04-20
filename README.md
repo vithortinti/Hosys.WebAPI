@@ -13,7 +13,7 @@ The application contains some dependencies that are not in this repository. Secr
 
 ## Secrets 🕵️
 
-Before you start, there is a file `create_dependences.sh` in the root directory of the project which helps you to automatically create the dependencies of the secrets mentioned in the Linux operating system. Run the following commands to start it:
+Before you start, there is a file `create_secrets.sh` in the root directory of the project which helps you to automatically create the dependencies of the secrets mentioned in the Linux operating system. Run the following commands to start it:
 
 1. Give permission to the file on your machine:
 ```bash
