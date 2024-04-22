@@ -8,7 +8,6 @@ cd ..
 
 # Create a `db_root_password.txt` file
 echo "rootpass" > secrets/docker/db_root_password.txt
->>>>>>> refs/remotes/origin/dev
 
 # Create a `secrets.json` file with the following content
 echo '{
