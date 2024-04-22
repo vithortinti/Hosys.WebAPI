@@ -13,6 +13,6 @@ public static class AppLoggerDi
 
         // Add the configuration to the services
         services.AddSingleton(configuration);
-        services.AddSingleton(typeof(IAppLogger<>), typeof(AppLogger<>));
+        services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
     }
 }

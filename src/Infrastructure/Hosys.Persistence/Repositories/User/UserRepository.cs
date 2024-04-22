@@ -196,7 +196,7 @@ namespace Hosys.Persistence.Repositories.User
             catch (Exception ex)
             {
                 return Result.Fail(new Error[] { 
-                    new("An error occurred when getting the user by email."),
+                    new("An error occurred when getting the user by nickname."),
                     new(ex.Message)
                     });
             }

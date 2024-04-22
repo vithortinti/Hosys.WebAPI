@@ -32,7 +32,7 @@ namespace Hosys.Application.UseCases
                 return Result.Fail("Name cannot be null or empty.");
             if (string.IsNullOrEmpty(userDto?.LastName))
                 return Result.Fail("Last Name cannot be null or empty.");
-            if (string.IsNullOrEmpty(userDto?.Nickname))
+            if (string.IsNullOrEmpty(userDto?.NickName))
                 return Result.Fail("NickName cannot be null or empty.");
             if (string.IsNullOrEmpty(userDto?.Email))
                 return Result.Fail("Email cannot be null or empty.");
@@ -44,7 +44,7 @@ namespace Hosys.Application.UseCases
                 return Result.Fail("The name constains a script tag.");
             else if (_textSecurityAnalyzer.HasScriptTag(userDto.LastName))
                 return Result.Fail("The last name constains a script tag.");
-            else if (_textSecurityAnalyzer.HasScriptTag(userDto.Nickname))
+            else if (_textSecurityAnalyzer.HasScriptTag(userDto.NickName))
                 return Result.Fail("The nickname constains a script tag.");
             else if (_textSecurityAnalyzer.HasScriptTag(userDto.Email))
                 return Result.Fail("The email constains a script tag.");
@@ -55,9 +55,9 @@ namespace Hosys.Application.UseCases
                 return Result.Fail($"The email {userDto.Email} is already in use.");
 
             // Check if nickname already exists
-            var nicknameExists = (await _identityValidator.NicknameExists(userDto.Nickname)).Value;
+            var nicknameExists = (await _identityValidator.NicknameExists(userDto.NickName)).Value;
             if (nicknameExists)
-                return Result.Fail($"The nickname {userDto.Nickname} already exists.");
+                return Result.Fail($"The nickname {userDto.NickName} already exists.");
 
             // Validate email format
             var emailRegex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
@@ -94,7 +94,7 @@ namespace Hosys.Application.UseCases
             // Get user by nickname
             var user = await _identityManager.GetUserByNickname(userDto.NickName);
             if (user.IsFailed)
-                return Result.Fail("User not found.");
+                return Result.Fail(user.Errors);
 
             // Validate password
             var checkResult = await _identityValidator.CheckUser(user.Value, userDto.Password);

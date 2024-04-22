@@ -1,5 +1,6 @@
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.Ports;
+using Hosys.Logger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,8 @@ namespace Hosys.WebAPI.Controllers
     [Route(AppConfiguration.API_ROUTE + "[controller]")]
     [Authorize]
     public class UserController(
-        IUserUseCases userUseCases
+        IUserUseCases userUseCases,
+        IAppLogger<UserController> logger
     ) : ControllerBase
     {
         [ProducesResponseType(200)]
@@ -23,13 +25,22 @@ namespace Hosys.WebAPI.Controllers
                 var result = await userUseCases.DeleteUser(
                     Guid.Parse(User.FindFirst("id")!.Value), confirmPassword.Password
                     );
-                if (result.IsSuccess)
-                    return NoContent();
-                else
+                
+                if (result.IsFailed)
+                {
+                    logger.LogWarning(
+                        $"Failed to delete user {User.FindFirst("id")!.Value}.",
+                        result.Errors.Select(e => e.Message).ToList()
+                    );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
+
+                logger.LogInformation($"User {User.FindFirst("id")!.Value} deleted successfully.");
+                return NoContent();
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, Guid.Parse(User.FindFirst("id")!.Value));
                 return BadRequest(new { message = "An unexpected error occured." });
             }
         }

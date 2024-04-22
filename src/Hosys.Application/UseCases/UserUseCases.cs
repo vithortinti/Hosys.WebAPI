@@ -20,12 +20,12 @@ namespace Hosys.Application.UseCases
             // Find the user
             var user = await identityManager.GetUserById(id);
             if (user.IsFailed)
-                return Result.Fail(user.Errors[0].Message);
+                return Result.Fail(user.Errors);
 
             // Check the user's password
             var validator = await identityValidator.CheckUser(user.Value, confirmPassword);
             if (validator.IsFailed)
-                return Result.Fail(validator.Errors[0].Message);
+                return Result.Fail(validator.Errors);
 
 
             // Remove the user's files from server

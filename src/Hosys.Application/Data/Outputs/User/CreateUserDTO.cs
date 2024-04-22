@@ -17,7 +17,7 @@ namespace Hosys.Application.Data.Outputs.Auth
         }
 
         private string? _nickname;
-        public required string Nickname
+        public required string NickName
         {
             get => _nickname!;
             set => _nickname = value.Trim();

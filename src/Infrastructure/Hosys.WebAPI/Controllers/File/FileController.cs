@@ -2,7 +2,7 @@ using FluentResults;
 using Hosys.Application.Data.Outputs.File;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.Ports;
-using JsonPatch;
+using Hosys.Logger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +14,11 @@ namespace Hosys.WebAPI.Controllers.File
     public class FileController(
         IFileUseCases fileUseCases, 
         IPdfUseCases pdfUseCases,
-        IFileHistoryUseCases fileHistoryUseCases
+        IFileHistoryUseCases fileHistoryUseCases,
+        IAppLogger<FileController> logger
         ) : ControllerBase
     {
+        private Guid userId => Guid.Parse(User.FindFirst("Id")!.Value);
 
         [HttpGet]
         [ProducesResponseType(200)]
@@ -31,17 +33,26 @@ namespace Hosys.WebAPI.Controllers.File
                 // Get the user files
                 Result<IEnumerable<ReadFileHistoryDTO>> result = 
                     await fileHistoryUseCases.GetByUserId(
-                        Guid.Parse(User.FindFirst("Id")!.Value), 
+                        userId, 
                         skip, 
                         take
                         );
                 if (result.IsFailed)
+                {
+                    await logger.LogWarning(
+                        "Failed to retrieve files.", 
+                        result.Errors.Select(e => e.Message).ToList(), 
+                        userId
+                        );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
 
+                await logger.LogInformation("Files retrieved successfully.", userId);
                 return Ok(result.Value);
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, userId);
                 return BadRequest(new { message = "An unexpected error occured." });
             }
         }
@@ -59,22 +70,31 @@ namespace Hosys.WebAPI.Controllers.File
                 // Convert the PDF file to images
                 var result = await pdfUseCases.ConvertToImage(fileInput.File!);
                 if (result.IsFailed)
+                {
+                    await logger.LogWarning(
+                        "Failed to convert PDF to image.", 
+                        result.Errors.Select(e => e.Message).ToList(), 
+                        userId
+                        );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
 
                 _ = await fileHistoryUseCases.Create(new CreateFileHistoryDTO
                 {
-                    UserId = Guid.Parse(User.FindFirst("Id")!.Value),
+                    UserId = userId,
                     FileName = result.Value.Name,
                     ContentType = result.Value.ContentType,
                     FilePath = result.Value.Path,
                     FileExtension = result.Value.Extension,
                     CreatedAt = DateTime.Now
-                }, Guid.Parse(User.FindFirst("Id")!.Value));
-
+                }, userId);
+                
+                await logger.LogInformation("PDF converted to image successfully and saved in File History.", userId);
                 return File(result.Value.FileStream, result.Value.ContentType, result.Value.Name);
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, userId);
                 return BadRequest(new { message = "An unexpected error occured." });
             }
         }
@@ -91,12 +111,21 @@ namespace Hosys.WebAPI.Controllers.File
             {
                 Result<FileOutput> result = await fileUseCases.CorruptFile(file.File!);
                 if (result.IsFailed)
+                {
+                    await logger.LogWarning(
+                        "Failed to corrupt file.", 
+                        result.Errors.Select(e => e.Message).ToList(), 
+                        userId
+                        );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
 
+                await logger.LogInformation("File corrupted successfully.", userId);
                 return File(result.Value.FileStream, result.Value.ContentType, result.Value.Name);
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, userId);
                 return BadRequest(new { message = "An unexpected error occured." });
             }
         }
@@ -112,16 +141,25 @@ namespace Hosys.WebAPI.Controllers.File
             try
             {
                 Result<FileOutput> result = await fileHistoryUseCases.GetFileStream(
-                    Guid.Parse(User.FindFirst("Id")!.Value), 
+                    userId, 
                     fileId
                     );
                 if (result.IsFailed)
+                {
+                    await logger.LogWarning(
+                        $"Failed to download file Id: {fileId}.", 
+                        result.Errors.Select(e => e.Message).ToList(), 
+                        userId
+                        );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
 
+                await logger.LogInformation($"File {fileId} downloaded successfully.", userId);
                 return File(result.Value.FileStream, result.Value.ContentType, result.Value.Name);
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, userId);
                 return StatusCode(500, new { message = "An unexpected error occured." });
             }
         }
@@ -136,16 +174,25 @@ namespace Hosys.WebAPI.Controllers.File
             try
             {
                 Result result = await fileHistoryUseCases.DeleteFile(
-                    Guid.Parse(User.FindFirst("Id")!.Value), 
+                    userId, 
                     fileId
                     );
                 if (result.IsFailed)
+                {
+                    await logger.LogWarning(
+                        $"Failed to delete file Id: {fileId}.", 
+                        result.Errors.Select(e => e.Message).ToList(), 
+                        userId
+                        );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
 
+                await logger.LogInformation("File deleted successfully.", userId);
                 return NoContent();
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, userId);
                 return StatusCode(500, new { message = "An unexpected error occured." });
             }
         }
@@ -159,17 +206,26 @@ namespace Hosys.WebAPI.Controllers.File
             try
             {
                 Result result = await fileHistoryUseCases.UpdateFileName(
-                    Guid.Parse(User.FindFirst("Id")!.Value), 
+                    userId, 
                     fileId, 
                     updateFileHistoryDTO
                     );
                 if (result.IsFailed)
+                {
+                    await logger.LogWarning(
+                        $"Failed to update file {fileId} metadata.", 
+                        result.Errors.Select(e => e.Message).ToList(), 
+                        userId
+                        );
                     return BadRequest(new { message = result.Errors[0].Message });
+                }
 
+                await logger.LogInformation($"File {fileId} metadata updated successfully.", userId);
                 return NoContent();
             }
-            catch
+            catch (Exception ex)
             {
+                await logger.LogError(ex.Message, ex, userId);
                 return StatusCode(500, new { message = "An unexpected error occured." });
             }
         }

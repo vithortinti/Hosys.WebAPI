@@ -64,7 +64,11 @@ namespace Hosys.Identity
 
         public async Task<Result<User>> GetUserByNickname(string nickname)
         {
-            return await userRepository.GetByNickname(nickname);
+            Result<User> user = await userRepository.GetByNickname(nickname);
+            if (user.IsFailed)
+                return Result.Fail(["User not found.", ..user.Errors.Select(x => x.Message)]);
+
+            return Result.Ok(user.Value);
         }
 
         public async Task<Result> UpdateUser(User user)
