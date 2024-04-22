@@ -15,6 +15,7 @@ using Hosys.Security.Interfaces;
 using Hosys.Security.Text;
 using Hosys.Services.Files.Pdf;
 using Hosys.Services.Jwt.Handle;
+using Hosys.Logger.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -28,10 +29,15 @@ var config = new ConfigurationBuilder()
     .Build();
 
 // Add services to the container.
-
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddAppLogger(builder => 
+{
+    builder.MinimumLogLevel = config["Logger:MinimumLogLevel"]!;
+    builder.LogFileName = config["Logger:LogFileName"]!;
+    builder.LogPath = config["Logger:LogPath"]!;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
