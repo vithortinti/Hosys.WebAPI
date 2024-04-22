@@ -15,9 +15,9 @@ namespace Hosys.Persistence.Repositories.User
             try
             {
                 string sql = @"INSERT INTO `USER` 
-                    (`ID`, `NAME`, `LAST_NAME`, `NICKNAME`, `E_MAIL`, `PASSWORD`, `ROLE`, `CREATED_AT`)
+                    (`ID`, `NAME`, `LAST_NAME`, `NICKNAME`, `E_MAIL`, `PASSWORD`, `ROLE`, `CREATED_AT`, `ACTIVE`)
                     VALUES
-                    (@ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT);";
+                    (@ID, @NAME, @LAST_NAME, @NICKNAME, @E_MAIL, @PASSWORD, @ROLE, @CREATED_AT, 1);";
 
                 user.Id = user.Id != Guid.Empty ? user.Id : Guid.NewGuid();
                 MySqlParameter[] parameters =
@@ -85,7 +85,8 @@ namespace Hosys.Persistence.Repositories.User
                     `NICKNAME`,
                     `E_MAIL`,
                     `ROLE`,
-                    `CREATED_AT`
+                    `CREATED_AT`,
+                    `ACTIVE`
                     FROM `USER` WHERE `ID` = @ID";
 
                 using var reader = await _database.ExecuteReaderAsync(sql, new MySqlParameter("@ID", id));
@@ -102,7 +103,8 @@ namespace Hosys.Persistence.Repositories.User
                     NickName = reader.GetString(4),
                     Email = reader.GetString(5),
                     Role = reader.GetString(6),
-                    CreatedAt = reader.GetDateTime(7)
+                    CreatedAt = reader.GetDateTime(7),
+                    Active = reader.GetBoolean(8)
                 });
             }
             catch (Exception ex)
@@ -129,7 +131,8 @@ namespace Hosys.Persistence.Repositories.User
                     `NICKNAME`,
                     `E_MAIL`,
                     `ROLE`,
-                    `CREATED_AT`
+                    `CREATED_AT`,
+                    `ACTIVE`
                     FROM `USER` WHERE `E_MAIL` = @E_MAIL";
 
                 using var reader = await _database.ExecuteReaderAsync(sql, new MySqlParameter("@E_MAIL", email));
@@ -146,7 +149,8 @@ namespace Hosys.Persistence.Repositories.User
                     NickName = reader.GetString(4),
                     Email = reader.GetString(5),
                     Role = reader.GetString(6),
-                    CreatedAt = reader.GetDateTime(7)
+                    CreatedAt = reader.GetDateTime(7),
+                    Active = reader.GetBoolean(8)
                 });
             }
             catch (Exception ex)
@@ -173,7 +177,8 @@ namespace Hosys.Persistence.Repositories.User
                     `NICKNAME`,
                     `E_MAIL`,
                     `ROLE`,
-                    `CREATED_AT`
+                    `CREATED_AT`,
+                    `ACTIVE`
                     FROM `USER` WHERE `NICKNAME` = @NICKNAME";
 
                 using var reader = await _database.ExecuteReaderAsync(sql, new MySqlParameter("@NICKNAME", nickname));
@@ -190,7 +195,8 @@ namespace Hosys.Persistence.Repositories.User
                     NickName = reader.GetString(4),
                     Email = reader.GetString(5),
                     Role = reader.GetString(6),
-                    CreatedAt = reader.GetDateTime(7)
+                    CreatedAt = reader.GetDateTime(7),
+                    Active = reader.GetBoolean(8)
                 });
             }
             catch (Exception ex)
@@ -298,6 +304,30 @@ namespace Hosys.Persistence.Repositories.User
             {
                 return Result.Fail(new Error[] { 
                     new("An error occurred when checking the user's password."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
+        }
+
+        public async Task<Result<int>> Count()
+        {
+            try
+            {
+                string sql = "SELECT COUNT(*) FROM `USER`";
+
+                using var reader = await _database.ExecuteReaderAsync(sql);
+
+                reader.Read();
+                return Result.Ok(reader.GetInt32(0));
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail<int>(new Error[] { 
+                    new("An error occurred when counting the users."),
                     new(ex.Message)
                     });
             }

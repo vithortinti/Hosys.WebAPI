@@ -14,6 +14,7 @@ namespace Hosys.Domain.Models.User
         public string Email { get; set; }
         public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool Active { get; set; }
         public UserRecovery? UserRecovery { get; set; }
     }
 }

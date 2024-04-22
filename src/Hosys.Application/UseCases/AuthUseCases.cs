@@ -97,6 +97,9 @@ namespace Hosys.Application.UseCases
                 return Result.Fail(user.Errors);
 
             // Validate password
+            if (!user.Value.Active)
+                return Result.Fail("The user is not active. Please, contact the administrator.");
+
             var checkResult = await _identityValidator.CheckUser(user.Value, userDto.Password);
             if (checkResult.IsSuccess)
             {

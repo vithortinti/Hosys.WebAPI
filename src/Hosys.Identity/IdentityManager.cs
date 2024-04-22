@@ -18,6 +18,12 @@ namespace Hosys.Identity
     {
         public async Task<Result> CreateUser(User user, string password)
         {
+            // Check if the user is the first user in the system
+            if ((await userRepository.Count()).Value == 0)
+            {
+                user.Role = "ADMIN";
+            }
+
             // First, create the user
             Result<User> createdUser = await userRepository.Create(user, await hash.HashAsync(password));
             if (createdUser.IsFailed)
