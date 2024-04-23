@@ -6,7 +6,7 @@ using Hosys.Logger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hosys.WebAPI.Controllers.File
+namespace Hosys.WebAPI.Controllers
 {
     [ApiController]
     [Route(AppConfiguration.API_ROUTE + "[controller]")]

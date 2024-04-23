@@ -16,6 +16,19 @@ namespace Hosys.Identity
         IHash hash
         ) : IIdentityManager
     {
+        public async Task<Result> ActiveUser(Guid id)
+        {
+            Result<User> user = await userRepository.Get(id);
+
+            if (user.IsFailed)
+                return Result.Fail(["User not found.", ..user.Errors.Select(e => e.Message)]);
+
+            user.Value.Active = true;
+            await userRepository.Update(user.Value);
+
+            return Result.Ok();
+        }
+
         public async Task<Result> CreateUser(User user, string password)
         {
             // Check if the user is the first user in the system
@@ -54,6 +67,19 @@ namespace Hosys.Identity
             return await deleteUserHelper.DeleteUser(user.Value);
         }
 
+        public async Task<Result> DisableUser(Guid id)
+        {
+            Result<User> user = await userRepository.Get(id);
+
+            if (user.IsFailed)
+                return Result.Fail(["User not found.", ..user.Errors.Select(e => e.Message)]);
+
+            user.Value.Active = false;
+            await userRepository.Update(user.Value);
+
+            return Result.Ok();
+        }
+
         public async Task<Result<string>> GetRecoveryKey(Guid userId)
         {
             Result<UserRecovery> userRecovery = await userRecoveryRepository.Get(userId);
@@ -75,6 +101,15 @@ namespace Hosys.Identity
                 return Result.Fail(["User not found.", ..user.Errors.Select(x => x.Message)]);
 
             return Result.Ok(user.Value);
+        }
+
+        public async Task<Result<bool>> GetUserStatus(Guid id)
+        {
+            Result<User> user = await userRepository.Get(id);
+            if (user.IsFailed)
+                return Result.Fail(["User not found.", ..user.Errors.Select(e => e.Message)]);
+
+            return user.Value.Active;
         }
 
         public async Task<Result> UpdateUser(User user)

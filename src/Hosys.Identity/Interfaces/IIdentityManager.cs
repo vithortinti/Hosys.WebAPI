@@ -10,5 +10,8 @@ namespace Hosys.Identity.Interfaces
         Task<Result<string>> GetRecoveryKey(Guid userId);
         Task<Result<Domain.Models.User.User>> GetUserByNickname(string nickname);
         Task<Result<Domain.Models.User.User>> GetUserById(Guid userId);
+        Task<Result<bool>> GetUserStatus(Guid id);
+        Task<Result> ActiveUser(Guid id);
+        Task<Result> DisableUser(Guid id);
     }
 }

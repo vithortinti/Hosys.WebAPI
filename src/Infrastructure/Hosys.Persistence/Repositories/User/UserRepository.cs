@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using FluentResults;
 using Hosys.Domain.Interfaces.User;
 using MySql.Data.MySqlClient;
@@ -220,7 +218,8 @@ namespace Hosys.Persistence.Repositories.User
                     SET NAME = @NAME,
                     LAST_NAME = @LAST_NAME,
                     NICKNAME = @NICKNAME,
-                    ROLE = @ROLE
+                    ROLE = @ROLE,
+                    ACTIVE = @ACTIVE
                     WHERE ID = @ID";
 
                 MySqlParameter[] parameters =
@@ -229,7 +228,8 @@ namespace Hosys.Persistence.Repositories.User
                     new MySqlParameter("@NAME", user.Name),
                     new MySqlParameter("@LAST_NAME", user.LastName),
                     new MySqlParameter("@NICKNAME", user.NickName),
-                    new MySqlParameter("@ROLE", user.Role)
+                    new MySqlParameter("@ROLE", user.Role),
+                    new MySqlParameter("@ACTIVE", user.Active)
                 ];
 
                 int rowsAffected = await _database.ExecuteCommandAsync(sql, parameters);
@@ -328,6 +328,63 @@ namespace Hosys.Persistence.Repositories.User
             {
                 return Result.Fail<int>(new Error[] { 
                     new("An error occurred when counting the users."),
+                    new(ex.Message)
+                    });
+            }
+            finally
+            {
+                _database.CloseConnection();
+            }
+        }
+
+        public async Task<Result<List<Domain.Models.User.User>>> GetAll(int skip, int take)
+        {
+            try
+            {
+                string sql = @"SELECT `ID`,
+                    `PUBLIC_ID`,
+                    `NAME`,
+                    `LAST_NAME`,
+                    `NICKNAME`,
+                    `E_MAIL`,
+                    `ROLE`,
+                    `CREATED_AT`,
+                    `ACTIVE`
+                    FROM `USER` LIMIT @SKIP, @TAKE";
+
+                MySqlParameter[] parameters =
+                [
+                    new MySqlParameter("@SKIP", skip),
+                    new MySqlParameter("@TAKE", take)
+                ];
+
+                using var reader = await _database.ExecuteReaderAsync(sql, parameters);
+                if (!reader.HasRows)
+                    return Result.Fail<List<Domain.Models.User.User>>("No users found.");
+
+                List<Domain.Models.User.User> users = new();
+                while (reader.Read())
+                {
+                    users.Add(new Domain.Models.User.User
+                    {
+                        Id = reader.GetGuid(0),
+                        PublicId = reader.GetInt32(1),
+                        Name = reader.GetString(2),
+                        LastName = reader.GetString(3),
+                        NickName = reader.GetString(4),
+                        Email = reader.GetString(5),
+                        Role = reader.GetString(6),
+                        CreatedAt = reader.GetDateTime(7),
+                        Active = reader.GetBoolean(8)
+                    });
+                }
+
+                return Result.Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail<List<Domain.Models.User.User>>(new Error[] { 
+                    new("An error occurred when getting all users."),
                     new(ex.Message)
                     });
             }

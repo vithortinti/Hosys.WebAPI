@@ -117,6 +117,7 @@ builder.Services.AddScoped<IPdfUseCases, PdfUseCases>();
 builder.Services.AddScoped<IFileHistoryUseCases, FileHistoryUseCases>();
 builder.Services.AddScoped<IFileUseCases, FileUseCases>();
 builder.Services.AddScoped<IUserUseCases, UserUseCases>();
+builder.Services.AddScoped<IAdminUseCases, AdminUseCases>();
 
 // Add repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
