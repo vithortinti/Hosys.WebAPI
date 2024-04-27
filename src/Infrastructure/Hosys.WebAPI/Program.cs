@@ -19,6 +19,7 @@ using Hosys.Logger.IoC;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Hosys.Identity.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = new ConfigurationBuilder()
@@ -91,8 +92,8 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization(options => 
 {
-    options.AddPolicy("Admin", policy => policy.RequireRole("ADMIN"));
-    options.AddPolicy("User", policy => policy.RequireRole("USER"));
+    options.AddPolicy("Admin", policy => policy.RequireRole(HosysRoles.ADMIN));
+    options.AddPolicy("User", policy => policy.RequireRole(HosysRoles.USER));
 });
 
 // Add CORS

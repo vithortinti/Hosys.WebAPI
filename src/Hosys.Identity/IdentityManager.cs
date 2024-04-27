@@ -3,6 +3,7 @@ using System.Text;
 using FluentResults;
 using Hosys.Domain.Interfaces.User;
 using Hosys.Domain.Models.User;
+using Hosys.Identity.Enums;
 using Hosys.Identity.Helpers;
 using Hosys.Identity.Interfaces;
 using Hosys.Security.Interfaces;
@@ -34,7 +35,7 @@ namespace Hosys.Identity
             // Check if the user is the first user in the system
             if ((await userRepository.Count()).Value == 0)
             {
-                user.Role = "ADMIN";
+                user.Role = HosysRoles.ADMIN;
             }
 
             // First, create the user

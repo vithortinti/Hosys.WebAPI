@@ -1,3 +1,5 @@
+using Hosys.Identity.Enums;
+
 namespace Hosys.Application.Data.Outputs.Auth
 {
     public class CreateUserDTO
@@ -31,7 +33,7 @@ namespace Hosys.Application.Data.Outputs.Auth
         }
         
         public required string Password { get; set; }
-        public string Role = "USER";
+        public string Role = HosysRoles.USER;
         public DateTime CreatedAt = DateTime.Now;
     }
 }

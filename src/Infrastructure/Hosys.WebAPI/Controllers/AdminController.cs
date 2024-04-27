@@ -2,6 +2,7 @@ using FluentResults;
 using Hosys.Application.Data.Outputs.Auth;
 using Hosys.Application.Interfaces.UseCases;
 using Hosys.Application.Ports;
+using Hosys.Identity.Enums;
 using Hosys.Logger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Hosys.WebAPI.Controllers;
 
 [Route(AppConfiguration.API_ROUTE + "[controller]")]
-[Authorize(Roles = "ADMIN")]
+[Authorize(Roles = HosysRoles.ADMIN)]
 public class AdminController(IAdminUseCases adminUseCases, IAppLogger<AdminController> logger) : ControllerBase
 {
     private Guid _userId => Guid.Parse(User.FindFirst("id")!.Value);
