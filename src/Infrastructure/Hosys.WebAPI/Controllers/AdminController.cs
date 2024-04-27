@@ -10,7 +10,7 @@ namespace Hosys.WebAPI.Controllers;
 
 [Route(AppConfiguration.API_ROUTE + "[controller]")]
 [Authorize(Roles = "ADMIN")]
-public class AdminController(IAdminUseCases adminUseCases, IAppLogger<AdminController> logger) : Controller
+public class AdminController(IAdminUseCases adminUseCases, IAppLogger<AdminController> logger) : ControllerBase
 {
     private Guid _userId => Guid.Parse(User.FindFirst("id")!.Value);
 

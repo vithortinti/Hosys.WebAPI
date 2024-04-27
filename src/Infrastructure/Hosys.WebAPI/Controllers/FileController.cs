@@ -120,6 +120,16 @@ namespace Hosys.WebAPI.Controllers
                     return BadRequest(new { message = result.Errors[0].Message });
                 }
 
+                _ = await fileHistoryUseCases.Create(new CreateFileHistoryDTO
+                {
+                    UserId = userId,
+                    FileName = result.Value.Name,
+                    ContentType = result.Value.ContentType,
+                    FilePath = result.Value.Path,
+                    FileExtension = result.Value.Extension,
+                    CreatedAt = DateTime.Now
+                }, userId);
+
                 await logger.LogInformation("File corrupted successfully.", userId);
                 return File(result.Value.FileStream, result.Value.ContentType, result.Value.Name);
             }

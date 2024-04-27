@@ -36,7 +36,7 @@ namespace Hosys.Application.UseCases
             // Return the file
             return Result.Ok(new FileOutput
             {
-                Name = formFile.FileName,
+                Name = Path.GetFileNameWithoutExtension(formFile.FileName),
                 Extension = Path.GetExtension(formFile.FileName),
                 ContentType = formFile.ContentType,
                 Path = file.Name,
