@@ -27,4 +27,4 @@ echo '{
       "ExpireIn": 30
     }
   }
-}' > src/Infrastructure/Hosys.WebAPI/secrets.json
+}' > src/Hosys.WebAPI/secrets.json
