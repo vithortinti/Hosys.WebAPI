@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Hosys.Domain\Hosys.Domain.csproj" />
+    <ProjectReference Include="..\Hosys.Domain\Hosys.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

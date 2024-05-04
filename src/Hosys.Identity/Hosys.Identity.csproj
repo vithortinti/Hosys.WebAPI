@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Hosys.Security\Hosys.Security.csproj" />
     <ProjectReference Include="..\Infrastructure\Hosys.Persistence\Hosys.Persistence.csproj" />
+    <ProjectReference Include="..\Hosys.Domain\Hosys.Domain.csproj" />
   </ItemGroup>
 
 </Project>
