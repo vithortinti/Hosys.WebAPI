@@ -41,7 +41,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, Guid.Parse(User.FindFirst("id")!.Value));
-                return BadRequest(new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
     }

@@ -53,7 +53,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, userId);
-                return BadRequest(new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
 
@@ -95,7 +95,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, userId);
-                return BadRequest(new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
 
@@ -136,7 +136,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, userId);
-                return BadRequest(new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
 
@@ -170,7 +170,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, userId);
-                return StatusCode(500, new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
 
@@ -203,7 +203,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, userId);
-                return StatusCode(500, new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
 
@@ -236,7 +236,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 await logger.LogError(ex.Message, ex, userId);
-                return StatusCode(500, new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
     }

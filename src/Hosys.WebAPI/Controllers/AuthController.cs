@@ -36,7 +36,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
-                return BadRequest(new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Hosys.WebAPI.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex.Message, ex);
-                return BadRequest(new { message = "An unexpected error occured." });
+                return StatusCode(500);
             }
         }
     }
