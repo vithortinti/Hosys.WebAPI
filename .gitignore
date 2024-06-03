@@ -133,3 +133,6 @@ $RECYCLE.BIN/
 .vs
 
 _NCrunch*
+
+*[Ss]ecrets.json*
+[Ss]ecrets

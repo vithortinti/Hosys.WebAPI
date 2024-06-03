@@ -8,6 +8,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hosys.Domain\Hosys.Domain.csproj" />
+    <ProjectReference Include="..\Hosys.Identity\Hosys.Identity.csproj" />
+    <ProjectReference Include="..\Hosys.Security\Hosys.Security.csproj" />
+    <ProjectReference Include="..\Hosys.Services\Hosys.Services.csproj" />
+    <ProjectReference Include="..\Infrastructure\Hosys.Services\Hosys.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.34" />
   </ItemGroup>
 
 </Project>

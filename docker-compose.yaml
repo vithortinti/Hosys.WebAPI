@@ -1,0 +1,37 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
+      - MYSQL_DATABASE=Hosys
+    volumes:
+      - ./mysql/initial-db.sql:/docker-entrypoint-initdb.d/initial-db.sql
+    ports:
+      - "3307:3306"
+    secrets:
+      - db_root_password
+    networks:
+      default:
+        ipv4_address: 172.20.0.10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      default:
+        ipv4_address: 172.20.0.11
+
+secrets:
+  db_root_password:
+    file: ./secrets/docker/db_root_password.txt
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
